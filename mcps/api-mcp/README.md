@@ -42,6 +42,8 @@ Then restart Claude Code in that project directory.
 - `API_BASE_URL`: Base URL for API requests (default: JSONPlaceholder demo API)
 - `API_KEY`: Optional API key for authentication
 
+**Windows Users:** This MCP is fully cross-platform. On Windows, use absolute paths in `.mcp.json` (see [WINDOWS.md](../../WINDOWS.md)).
+
 ## Usage Examples
 
 ### GET Request

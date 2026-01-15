@@ -56,6 +56,8 @@ Then restart Claude Code in that project directory.
 **Environment Variables:**
 - `DB_PATH`: Path to SQLite database file (default: demo.db in current directory)
 
+**Windows Users:** This MCP is fully cross-platform. On Windows, use absolute paths in `.mcp.json` (see [WINDOWS.md](../../WINDOWS.md)). The code uses `path.join()` and `better-sqlite3` which work on Windows, macOS, and Linux.
+
 ## Usage Examples
 
 ### Query Data

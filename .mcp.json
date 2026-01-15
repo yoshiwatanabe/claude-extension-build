@@ -5,6 +5,15 @@
       "args": [
         "${PWD}/mcps/filesystem-mcp/index.js"
       ]
+    },
+    "database": {
+      "command": "node",
+      "args": [
+        "${PWD}/mcps/database-mcp/index.js"
+      ],
+      "env": {
+        "DB_PATH": "${PWD}/mcps/database-mcp/demo.db"
+      }
     }
   }
 }
