@@ -1,0 +1,16 @@
+{
+  "name": "filesystem-mcp",
+  "version": "1.0.0",
+  "description": "Secure filesystem access MCP server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "filesystem", "claude"],
+  "author": "Learning Examples",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  }
+}

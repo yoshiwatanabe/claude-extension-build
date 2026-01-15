@@ -1,0 +1,18 @@
+{
+  "name": "database-mcp",
+  "version": "1.0.0",
+  "description": "SQLite database access MCP server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "init-demo": "node init-demo-db.js"
+  },
+  "keywords": ["mcp", "database", "sqlite", "claude"],
+  "author": "Learning Examples",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "better-sqlite3": "^11.7.0"
+  }
+}

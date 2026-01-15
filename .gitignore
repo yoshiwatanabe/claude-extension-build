@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# MCP-specific
+mcps/*/node_modules/
+mcps/*/package-lock.json
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/

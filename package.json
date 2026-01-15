@@ -1,0 +1,34 @@
+{
+  "name": "claude-skills-mcp-learning",
+  "version": "1.0.0",
+  "description": "Learning repository for Claude Skills and MCP servers",
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install && cd mcps/filesystem-mcp && npm install && cd ../api-mcp && npm install && cd ../database-mcp && npm install",
+    "setup": "npm run install:all",
+    "demo:filesystem": "cd mcps/filesystem-mcp && npm start",
+    "demo:api": "cd mcps/api-mcp && npm start",
+    "demo:database": "cd mcps/database-mcp && npm run init-demo && npm start",
+    "test:all": "echo 'Testing all MCP servers...' && npm run test:filesystem && npm run test:api && npm run test:database",
+    "test:filesystem": "cd mcps/filesystem-mcp && node -e \"import('./index.js').then(() => setTimeout(() => process.exit(0), 1000))\"",
+    "test:api": "cd mcps/api-mcp && node -e \"import('./index.js').then(() => setTimeout(() => process.exit(0), 1000))\"",
+    "test:database": "cd mcps/database-mcp && node -e \"import('./index.js').then(() => setTimeout(() => process.exit(0), 1000))\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/claude-skills-mcp-learning"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "mcp",
+    "skills",
+    "model-context-protocol",
+    "ai",
+    "learning",
+    "examples"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {}
+}

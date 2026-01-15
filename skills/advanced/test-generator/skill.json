@@ -1,0 +1,7 @@
+{
+  "name": "test-generator",
+  "description": "Generates comprehensive unit tests for your code",
+  "version": "1.0.0",
+  "author": "Learning Examples",
+  "model": "sonnet"
+}

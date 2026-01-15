@@ -1,0 +1,7 @@
+{
+  "name": "code-reviewer",
+  "description": "Performs thorough code reviews with actionable feedback",
+  "version": "1.0.0",
+  "author": "Learning Examples",
+  "model": "sonnet"
+}

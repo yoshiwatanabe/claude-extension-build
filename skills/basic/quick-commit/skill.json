@@ -1,0 +1,12 @@
+{
+  "name": "quick-commit",
+  "description": "Creates conventional commit messages from your changes",
+  "version": "1.0.0",
+  "author": "Learning Examples",
+  "allowedPrompts": [
+    {
+      "tool": "Bash",
+      "prompt": "run git commands"
+    }
+  ]
+}

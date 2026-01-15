@@ -1,0 +1,17 @@
+{
+  "name": "api-mcp",
+  "version": "1.0.0",
+  "description": "REST API integration MCP server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "api", "rest", "claude"],
+  "author": "Learning Examples",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "node-fetch": "^3.3.2"
+  }
+}
