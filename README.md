@@ -65,6 +65,8 @@ Model Context Protocol (MCP) servers provide Claude with access to external data
 - Node.js 18+ (for MCP servers)
 - Basic understanding of JavaScript/TypeScript
 
+**Windows Users:** See [WINDOWS.md](WINDOWS.md) for Windows-specific setup instructions.
+
 ## Learn More
 
 - [Claude Code Documentation](https://github.com/anthropics/claude-code)

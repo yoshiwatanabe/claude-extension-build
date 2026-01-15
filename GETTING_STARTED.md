@@ -25,6 +25,8 @@ Before you begin, make sure you have:
    - JavaScript/Node.js basics
    - Git (optional, for cloning)
 
+**Windows Users:** This guide uses Unix-style commands. See [WINDOWS.md](WINDOWS.md) for Windows-specific instructions.
+
 ## Learning Path
 
 Follow this recommended order for the best learning experience:

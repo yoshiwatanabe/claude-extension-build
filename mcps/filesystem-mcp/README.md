@@ -14,11 +14,11 @@ A secure MCP server that provides sandboxed file system access to Claude.
 ## Security
 
 This MCP implements sandboxing to prevent unauthorized file access. By default, it only allows access to:
-- Your home directory (`$HOME`)
-- `/tmp` directory
+- Your home directory (cross-platform: uses `os.homedir()`)
+- System temp directory (cross-platform: uses `os.tmpdir()`)
 - Current working directory
 
-You can modify `ALLOWED_DIRS` in `index.js` to customize allowed paths.
+These paths work on Windows, macOS, and Linux. You can modify `ALLOWED_DIRS` in `index.js` to customize allowed paths.
 
 ## Installation
 
@@ -141,11 +141,13 @@ Gets detailed information about a file.
 
 Edit `index.js`:
 ```javascript
+import os from 'os';
+
 const ALLOWED_DIRS = [
-  process.env.HOME,
-  '/tmp',
-  process.cwd(),
-  '/path/to/your/project'  // Add your path here
+  os.homedir(),           // Home directory (cross-platform)
+  os.tmpdir(),            // Temp directory (cross-platform)
+  process.cwd(),          // Current directory
+  '/path/to/your/project' // Add your specific path here
 ];
 ```
 

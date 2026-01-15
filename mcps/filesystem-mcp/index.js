@@ -4,15 +4,17 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import fs from 'fs/promises';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Allowed directories for file operations (sandbox)
+// Cross-platform: works on Windows, macOS, and Linux
 const ALLOWED_DIRS = [
-  process.env.HOME,
-  '/tmp',
-  process.cwd()
+  os.homedir(),        // User home directory (cross-platform)
+  os.tmpdir(),         // Temp directory (cross-platform)
+  process.cwd()        // Current working directory
 ];
 
 // Check if path is within allowed directories
