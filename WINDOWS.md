@@ -38,7 +38,7 @@ The `.mcp.json` file works on Windows, but you need to use **absolute paths** in
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": ["${PWD}/mcps/filesystem-mcp/index.js"]
+      "args": ["${PWD}/.claude/mcps/filesystem-mcp/index.js"]
     }
   }
 }
@@ -50,7 +50,7 @@ The `.mcp.json` file works on Windows, but you need to use **absolute paths** in
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": ["C:\\Users\\YourName\\projects\\claude-extension-build\\mcps\\filesystem-mcp\\index.js"]
+      "args": ["C:\\Users\\YourName\\projects\\claude-extension-build\\.claude\mcps\\filesystem-mcp\\index.js"]
     }
   }
 }
@@ -62,7 +62,7 @@ The `.mcp.json` file works on Windows, but you need to use **absolute paths** in
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/filesystem-mcp/index.js"]
+      "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/filesystem-mcp/index.js"]
     }
   }
 }
@@ -93,7 +93,7 @@ set DB_PATH=C:\path\to\database.db
   "mcpServers": {
     "database": {
       "command": "node",
-      "args": ["C:/path/to/mcps/database-mcp/index.js"],
+      "args": ["C:/path/to/.claude/mcps/database-mcp/index.js"],
       "env": {
         "DB_PATH": "C:/path/to/demo.db"
       }
@@ -136,11 +136,11 @@ Create `.mcp.json` in the project root with absolute paths:
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/filesystem-mcp/index.js"]
+      "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/filesystem-mcp/index.js"]
     },
     "api": {
       "command": "node",
-      "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/api-mcp/index.js"],
+      "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/api-mcp/index.js"],
       "env": {
         "API_BASE_URL": "https://jsonplaceholder.typicode.com",
         "API_KEY": ""
@@ -148,9 +148,9 @@ Create `.mcp.json` in the project root with absolute paths:
     },
     "database": {
       "command": "node",
-      "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/database-mcp/index.js"],
+      "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/database-mcp/index.js"],
       "env": {
-        "DB_PATH": "C:/Users/YourName/projects/claude-extension-build/mcps/database-mcp/demo.db"
+        "DB_PATH": "C:/Users/YourName/projects/claude-extension-build/.claude/mcps/database-mcp/demo.db"
       }
     }
   }
@@ -159,14 +159,15 @@ Create `.mcp.json` in the project root with absolute paths:
 
 **Important:** Replace `C:/Users/YourName/projects/claude-extension-build` with your actual path.
 
-### 5. Install Skills
+### 5. Skills (Already Configured!)
 
+Skills are already in `.claude\skills\` and are auto-discovered by Claude Code. No installation needed!
+
+To use skills:
 ```powershell
-# Create skills directory
-New-Item -ItemType Directory -Force -Path "$env:APPDATA\Claude\skills"
-
-# Copy a skill (example: hello-world)
-Copy-Item -Recurse skills\basic\hello-world "$env:APPDATA\Claude\skills\hello-world"
+# Just use them with slash commands
+/hello-world
+/file-stats README.md
 ```
 
 ### 6. Restart Claude Code
@@ -183,7 +184,7 @@ Get-Location
 
 # Get full path to MCP
 Join-Path (Get-Location) "mcps\filesystem-mcp\index.js"
-# Output: C:\Users\YourName\projects\claude-extension-build\mcps\filesystem-mcp\index.js
+# Output: C:\Users\YourName\projects\claude-extension-build\.claude\mcps\filesystem-mcp\index.js
 ```
 
 ### Command Prompt
@@ -193,7 +194,7 @@ cd
 # Output: C:\Users\YourName\projects\claude-extension-build
 
 # Get full path (manually construct)
-echo %CD%\mcps\filesystem-mcp\index.js
+echo %CD%\.claude\mcps\filesystem-mcp\index.js
 ```
 
 ## Testing on Windows
@@ -250,11 +251,12 @@ claude
 
 ### 4. Skills Not Showing Up
 
-**Issue:** Skills don't appear after copying.
+**Issue:** Skills don't appear after cloning the repo.
 
 **Solution:**
-- Check path: Should be `%APPDATA%\Claude\skills\skill-name\`
-- Verify `prompt.md` exists in the skill directory
+- Check path: Should be `.claude\skills\skill-name\` in the project
+- Verify `SKILL.md` exists in the skill directory (not `prompt.md`)
+- SKILL.md must have YAML frontmatter with `name` and `description`
 - Restart Claude Code
 
 ### 5. Line Ending Issues
@@ -273,7 +275,7 @@ git config --global core.autocrlf true
 ```json
 {
   "command": "node",
-  "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/filesystem-mcp/index.js"]
+  "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/filesystem-mcp/index.js"]
 }
 ```
 
@@ -281,7 +283,7 @@ git config --global core.autocrlf true
 ```json
 {
   "command": "node",
-  "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/api-mcp/index.js"],
+  "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/api-mcp/index.js"],
   "env": {
     "API_BASE_URL": "https://api.github.com",
     "API_KEY": "your_token_here"
@@ -293,9 +295,9 @@ git config --global core.autocrlf true
 ```json
 {
   "command": "node",
-  "args": ["C:/Users/YourName/projects/claude-extension-build/mcps/database-mcp/index.js"],
+  "args": ["C:/Users/YourName/projects/claude-extension-build/.claude/mcps/database-mcp/index.js"],
   "env": {
-    "DB_PATH": "C:/Users/YourName/projects/claude-extension-build/mcps/database-mcp/demo.db"
+    "DB_PATH": "C:/Users/YourName/projects/claude-extension-build/.claude/mcps/database-mcp/demo.db"
   }
 }
 ```

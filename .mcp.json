@@ -3,16 +3,16 @@
     "filesystem": {
       "command": "node",
       "args": [
-        "${PWD}/mcps/filesystem-mcp/index.js"
+        "${PWD}/.claude/mcps/filesystem-mcp/index.js"
       ]
     },
     "database": {
       "command": "node",
       "args": [
-        "${PWD}/mcps/database-mcp/index.js"
+        "${PWD}/.claude/mcps/database-mcp/index.js"
       ],
       "env": {
-        "DB_PATH": "${PWD}/mcps/database-mcp/demo.db"
+        "DB_PATH": "${PWD}/.claude/mcps/database-mcp/demo.db"
       }
     }
   }
