@@ -14,6 +14,12 @@
       "env": {
         "DB_PATH": "${PWD}/.claude/mcps/database-mcp/demo.db"
       }
+    },
+    "weather": {
+      "command": "node",
+      "args": [
+        "${PWD}/.claude/mcps/weather-server/index.js"
+      ]
     }
   }
 }

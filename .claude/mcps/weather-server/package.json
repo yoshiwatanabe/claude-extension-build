@@ -1,0 +1,17 @@
+{
+  "name": "weather-server",
+  "version": "1.0.0",
+  "description": "Weather API integration MCP server - demonstrates external anonymous API calls",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "weather", "api", "claude"],
+  "author": "Learning Examples",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "node-fetch": "^3.3.2"
+  }
+}
