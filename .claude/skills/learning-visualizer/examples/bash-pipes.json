@@ -1,0 +1,76 @@
+{
+    "type": "flow",
+    "title": "Text Processing Pipeline with grep",
+    "description": "How data flows through grep and related commands",
+    "nodes": [
+        {
+            "id": "1",
+            "label": "cat file.txt",
+            "nodeType": "start",
+            "description": "Read file contents to stdout",
+            "code": "cat file.txt"
+        },
+        {
+            "id": "2",
+            "label": "grep 'pattern'",
+            "nodeType": "process",
+            "description": "Search for lines matching pattern",
+            "code": "grep 'pattern' file.txt",
+            "metadata": {
+                "difficulty": 2
+            }
+        },
+        {
+            "id": "3",
+            "label": "Matches found?",
+            "nodeType": "decision",
+            "description": "Check if pattern was found"
+        },
+        {
+            "id": "4",
+            "label": "sort output",
+            "nodeType": "process",
+            "description": "Sort matched lines alphabetically",
+            "code": "sort"
+        },
+        {
+            "id": "5",
+            "label": "Save to output.txt",
+            "nodeType": "end",
+            "description": "Write results to file",
+            "code": "> output.txt"
+        }
+    ],
+    "edges": [
+        {
+            "from": "1",
+            "to": "2",
+            "label": "stdout → stdin",
+            "edgeType": "normal"
+        },
+        {
+            "from": "2",
+            "to": "3",
+            "label": "results",
+            "edgeType": "normal"
+        },
+        {
+            "from": "3",
+            "to": "4",
+            "label": "yes",
+            "edgeType": "conditional"
+        },
+        {
+            "from": "3",
+            "to": "5",
+            "label": "no",
+            "edgeType": "error"
+        },
+        {
+            "from": "4",
+            "to": "5",
+            "label": "sorted lines",
+            "edgeType": "normal"
+        }
+    ]
+}

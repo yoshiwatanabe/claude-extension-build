@@ -1,0 +1,96 @@
+{
+    "type": "timeline",
+    "title": "Bash Learning Roadmap",
+    "description": "6-week learning schedule for Bash fundamentals",
+    "events": [
+        {
+            "id": "week1",
+            "timestamp": "2024-02-01",
+            "label": "Week 1: Basics",
+            "description": "Shell navigation, files & directories, basic commands (ls, cd, pwd, cat)",
+            "duration": 7,
+            "category": "fundamentals",
+            "metadata": {
+                "completed": true,
+                "difficulty": 1
+            }
+        },
+        {
+            "id": "week2",
+            "timestamp": "2024-02-08",
+            "label": "Week 2: File Operations",
+            "description": "Creating, copying, moving, deleting files (touch, cp, mv, rm)",
+            "duration": 7,
+            "category": "fundamentals",
+            "metadata": {
+                "completed": true,
+                "difficulty": 1
+            }
+        },
+        {
+            "id": "week3",
+            "timestamp": "2024-02-15",
+            "label": "Week 3: Text Processing",
+            "description": "Searching and filtering (grep, find, awk, sed basics)",
+            "duration": 7,
+            "category": "core-tools",
+            "metadata": {
+                "completed": false,
+                "difficulty": 2
+            }
+        },
+        {
+            "id": "week4",
+            "timestamp": "2024-02-22",
+            "label": "Week 4: Pipes & Redirection",
+            "description": "Chaining commands with pipes, redirecting input/output",
+            "duration": 7,
+            "category": "core-tools",
+            "metadata": {
+                "completed": false,
+                "difficulty": 2
+            }
+        },
+        {
+            "id": "week5",
+            "timestamp": "2024-02-29",
+            "label": "Week 5: Shell Scripting",
+            "description": "Variables, control flow, functions, basic scripts",
+            "duration": 7,
+            "category": "scripting",
+            "metadata": {
+                "completed": false,
+                "difficulty": 3
+            }
+        },
+        {
+            "id": "week6",
+            "timestamp": "2024-03-07",
+            "label": "Week 6: Advanced Scripting",
+            "description": "Error handling, debugging, best practices",
+            "duration": 7,
+            "category": "scripting",
+            "metadata": {
+                "completed": false,
+                "difficulty": 3
+            }
+        }
+    ],
+    "milestones": [
+        {
+            "id": "m1",
+            "timestamp": "2024-02-15",
+            "label": "Fundamentals Complete"
+        },
+        {
+            "id": "m2",
+            "timestamp": "2024-02-29",
+            "label": "Core Tools Mastered"
+        },
+        {
+            "id": "m3",
+            "timestamp": "2024-03-14",
+            "label": "Bash Advanced"
+        }
+    ]
+}

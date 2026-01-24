@@ -1,0 +1,131 @@
+{
+    "type": "matrix",
+    "title": "Programming Language Comparison",
+    "description": "Feature comparison across popular languages",
+    "rows": [
+        {
+            "id": "python",
+            "label": "Python",
+            "description": "High-level, dynamic language"
+        },
+        {
+            "id": "javascript",
+            "label": "JavaScript",
+            "description": "Event-driven, web-first language"
+        },
+        {
+            "id": "go",
+            "label": "Go",
+            "description": "Fast, compiled, concurrent language"
+        },
+        {
+            "id": "rust",
+            "label": "Rust",
+            "description": "Memory-safe systems language"
+        }
+    ],
+    "columns": [
+        {
+            "id": "ease",
+            "label": "Ease of Learning",
+            "weight": 2,
+            "description": "How easy to start"
+        },
+        {
+            "id": "performance",
+            "label": "Performance",
+            "weight": 1,
+            "description": "Execution speed"
+        },
+        {
+            "id": "web",
+            "label": "Web Dev",
+            "weight": 1,
+            "description": "Good for web applications"
+        },
+        {
+            "id": "backend",
+            "label": "Backend",
+            "weight": 2,
+            "description": "Good for server applications"
+        },
+        {
+            "id": "datascience",
+            "label": "Data Science",
+            "weight": 1,
+            "description": "Libraries and tools"
+        }
+    ],
+    "cells": [
+        {
+            "row": "python",
+            "col": "ease",
+            "value": "Excellent",
+            "score": 5,
+            "description": "Python's readable syntax makes it ideal for beginners"
+        },
+        {
+            "row": "python",
+            "col": "performance",
+            "value": "Good",
+            "score": 3,
+            "description": "Interpreted language, slower than compiled languages"
+        },
+        {
+            "row": "python",
+            "col": "datascience",
+            "value": "Excellent",
+            "score": 5,
+            "description": "NumPy, Pandas, Scikit-learn make it the leader"
+        },
+        {
+            "row": "javascript",
+            "col": "ease",
+            "value": "Good",
+            "score": 4,
+            "description": "Some async complexity, but widely taught"
+        },
+        {
+            "row": "javascript",
+            "col": "web",
+            "value": "Excellent",
+            "score": 5,
+            "description": "Native browser support, most web frameworks"
+        },
+        {
+            "row": "javascript",
+            "col": "backend",
+            "value": "Good",
+            "score": 4,
+            "description": "Node.js enables full-stack development"
+        },
+        {
+            "row": "go",
+            "col": "performance",
+            "value": "Excellent",
+            "score": 5,
+            "description": "Compiled language, near C performance"
+        },
+        {
+            "row": "go",
+            "col": "backend",
+            "value": "Excellent",
+            "score": 5,
+            "description": "Built for concurrent backend systems"
+        },
+        {
+            "row": "rust",
+            "col": "performance",
+            "value": "Excellent",
+            "score": 5,
+            "description": "C-level performance with safety"
+        },
+        {
+            "row": "rust",
+            "col": "ease",
+            "value": "Difficult",
+            "score": 1,
+            "description": "Steep learning curve, borrow checker complexity"
+        }
+    ]
+}

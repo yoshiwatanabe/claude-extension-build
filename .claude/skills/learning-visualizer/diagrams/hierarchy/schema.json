@@ -1,0 +1,110 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Hierarchy Tree Diagram Schema",
+    "type": "object",
+    "required": [
+        "type",
+        "root",
+        "nodes"
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "const": "hierarchy",
+            "description": "Diagram type identifier"
+        },
+        "title": {
+            "type": "string",
+            "description": "Diagram title"
+        },
+        "description": {
+            "type": "string",
+            "description": "Diagram description"
+        },
+        "root": {
+            "type": "object",
+            "required": [
+                "id",
+                "label"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "enum": [
+                                "beginner",
+                                "intermediate",
+                                "advanced"
+                            ]
+                        },
+                        "status": {
+                            "enum": [
+                                "complete",
+                                "in-progress",
+                                "locked",
+                                "optional"
+                            ]
+                        },
+                        "difficulty": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5
+                        },
+                        "importance": {
+                            "enum": [
+                                "core",
+                                "supporting",
+                                "optional"
+                            ]
+                        },
+                        "category": {
+                            "type": "string"
+                        },
+                        "color": {
+                            "type": "string",
+                            "pattern": "^#[0-9A-Fa-f]{6}$"
+                        }
+                    }
+                }
+            }
+        },
+        "nodes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "parentId",
+                    "label"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "parentId": {
+                        "type": "string"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "metadata": {
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    }
+}

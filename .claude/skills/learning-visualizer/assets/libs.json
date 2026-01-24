@@ -1,0 +1,56 @@
+{
+    "libraries": [
+        {
+            "name": "D3.js",
+            "version": "7.x",
+            "url": "https://d3js.org/d3.v7.min.js",
+            "diagrams": [
+                "hierarchy",
+                "matrix"
+            ],
+            "description": "Data-driven documents for visualization"
+        },
+        {
+            "name": "Vis.js",
+            "version": "4.21.0",
+            "url": "https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js",
+            "css": "https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css",
+            "diagrams": [
+                "network",
+                "timeline"
+            ],
+            "description": "Network and timeline visualizations"
+        },
+        {
+            "name": "Mermaid.js",
+            "version": "10.x",
+            "url": "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js",
+            "diagrams": [
+                "flow"
+            ],
+            "description": "Diagram and chart creation from text"
+        }
+    ],
+    "colorScheme": {
+        "primary": "#2E86AB",
+        "secondary": "#A23B72",
+        "accent": "#F18F01",
+        "success": "#06A77D",
+        "warning": "#F4B860",
+        "danger": "#C94C4C",
+        "info": "#4ECDC4"
+    },
+    "status": {
+        "complete": "#06A77D",
+        "in-progress": "#F4B860",
+        "locked": "#C94C4C",
+        "optional": "#999999"
+    },
+    "difficulty": {
+        "1": "#4ECDC4",
+        "2": "#44A08D",
+        "3": "#F4B860",
+        "4": "#FF8C42",
+        "5": "#C94C4C"
+    }
+}

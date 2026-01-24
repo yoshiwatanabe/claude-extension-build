@@ -1,0 +1,94 @@
+{
+    "type": "hierarchy",
+    "title": "JavaScript Learning Path",
+    "description": "Prerequisite tree for learning JavaScript",
+    "root": {
+        "id": "root",
+        "label": "JavaScript Fundamentals",
+        "description": "Complete foundation of the language",
+        "metadata": {
+            "level": "beginner",
+            "status": "in-progress",
+            "difficulty": 1
+        }
+    },
+    "nodes": [
+        {
+            "id": "vars",
+            "parentId": "root",
+            "label": "Variables & Types",
+            "description": "var, let, const, and primitive types (string, number, boolean, null, undefined)",
+            "metadata": {
+                "level": "beginner",
+                "status": "complete",
+                "difficulty": 1
+            }
+        },
+        {
+            "id": "ops",
+            "parentId": "root",
+            "label": "Operators & Logic",
+            "description": "Arithmetic, comparison, logical operators, and control flow",
+            "metadata": {
+                "level": "beginner",
+                "status": "complete",
+                "difficulty": 1
+            }
+        },
+        {
+            "id": "funcs",
+            "parentId": "root",
+            "label": "Functions",
+            "description": "Function declarations, expressions, arrow functions, scope",
+            "metadata": {
+                "level": "beginner",
+                "status": "in-progress",
+                "difficulty": 2
+            }
+        },
+        {
+            "id": "objects",
+            "parentId": "root",
+            "label": "Objects & Arrays",
+            "description": "Object literals, properties, methods, arrays, and iteration",
+            "metadata": {
+                "level": "intermediate",
+                "status": "locked",
+                "difficulty": 2
+            }
+        },
+        {
+            "id": "async",
+            "parentId": "funcs",
+            "label": "Async Functions",
+            "description": "async/await, Promises, callbacks, event loop",
+            "metadata": {
+                "level": "intermediate",
+                "status": "locked",
+                "difficulty": 3
+            }
+        },
+        {
+            "id": "classes",
+            "parentId": "objects",
+            "label": "Classes & OOP",
+            "description": "Class syntax, inheritance, prototypes, this keyword",
+            "metadata": {
+                "level": "intermediate",
+                "status": "locked",
+                "difficulty": 3
+            }
+        },
+        {
+            "id": "advanced",
+            "parentId": "async",
+            "label": "Advanced Patterns",
+            "description": "Design patterns, functional programming, closures",
+            "metadata": {
+                "level": "advanced",
+                "status": "locked",
+                "difficulty": 4
+            }
+        }
+    ]
+}

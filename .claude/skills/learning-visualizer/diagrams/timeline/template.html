@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { padding: 24px; background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%); color: white; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .timeline-container { padding: 40px 20px; }
+        .timeline { position: relative; }
+        .timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #2E86AB; transform: translateX(-50%); }
+        .timeline-item { margin-bottom: 50px; position: relative; }
+        .timeline-item:nth-child(odd) .content { margin-left: 0; margin-right: auto; width: 45%; }
+        .timeline-item:nth-child(even) .content { margin-left: auto; margin-right: 0; width: 45%; }
+        .timeline-item .dot { position: absolute; left: 50%; top: 10px; width: 20px; height: 20px; background: white; border: 4px solid #2E86AB; border-radius: 50%; transform: translateX(-50%); z-index: 1; }
+        .timeline-item.complete .dot { background: #06A77D; border-color: #06A77D; }
+        .timeline-item.in-progress .dot { background: #F4B860; border-color: #F4B860; }
+        .content { padding: 20px; background: #f8f9fa; border-radius: 6px; cursor: pointer; transition: all 0.3s; border-left: 4px solid #2E86AB; }
+        .content:hover { background: #eef2f5; border-left-color: #A23B72; }
+        .timeline-item:nth-child(even) .content { border-left: none; border-right: 4px solid #2E86AB; }
+        .timeline-item:nth-child(even) .content:hover { border-right-color: #A23B72; }
+        .content h3 { font-size: 16px; margin-bottom: 8px; color: #222; }
+        .content .date { font-size: 12px; color: #666; margin-bottom: 8px; }
+        .content p { font-size: 13px; color: #555; line-height: 1.5; }
+        .tooltip { position: absolute; background: white; border: 1px solid #ddd; border-radius: 6px; padding: 12px; font-size: 12px; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); max-width: 300px; display: none; }
+        .tooltip.active { display: block; }
+        .tooltip-title { font-weight: 600; margin-bottom: 4px; }
+        .tooltip-desc { color: #666; font-size: 11px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="title">Timeline</h1>
+            <p id="description"></p>
+        </div>
+        <div class="timeline-container">
+            <div class="timeline" id="timeline"></div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-desc" id="tooltip-desc"></div>
+    </div>
+
+    <script>
+        const diagramData = __DIAGRAM_DATA__;
+
+        document.getElementById('title').textContent = diagramData.title || 'Timeline';
+        document.getElementById('description').textContent = diagramData.description || '';
+
+        const timelineEl = document.getElementById('timeline');
+        const tooltip = document.getElementById('tooltip');
+
+        // Sort events by timestamp
+        const sortedEvents = [...diagramData.events].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        sortedEvents.forEach((event, idx) => {
+            const item = document.createElement('div');
+            item.className = `timeline-item ${event.metadata?.completed ? 'complete' : event.metadata?.in-progress ? 'in-progress' : ''}`;
+
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            item.appendChild(dot);
+
+            const content = document.createElement('div');
+            content.className = 'content';
+
+            const h3 = document.createElement('h3');
+            h3.textContent = event.label;
+
+            const date = document.createElement('div');
+            date.className = 'date';
+            date.textContent = new Date(event.timestamp).toLocaleDateString();
+
+            const p = document.createElement('p');
+            p.textContent = event.description || '';
+
+            content.appendChild(h3);
+            content.appendChild(date);
+            content.appendChild(p);
+
+            content.addEventListener('mouseenter', (e) => {
+                tooltip.classList.add('active');
+                document.getElementById('tooltip-title').textContent = event.label;
+                document.getElementById('tooltip-desc').textContent = event.description || '';
+                tooltip.style.left = (e.pageX + 10) + 'px';
+                tooltip.style.top = (e.pageY + 10) + 'px';
+            });
+
+            content.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('active');
+            });
+
+            item.appendChild(content);
+            timelineEl.appendChild(item);
+        });
+    </script>
+</body>
+</html>

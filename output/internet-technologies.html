@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Core Internet Technologies & Protocols</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --bg-deep: #050b14;
+            --bg-panel: rgba(10, 20, 35, 0.85);
+            --neon-cyan: #00f2ff;
+            --neon-magenta: #ff00ff;
+            --neon-lime: #39ff14;
+            --grid-color: rgba(0, 242, 255, 0.05);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-deep);
+            color: var(--neon-cyan);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .cyber-grid {
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            position: relative;
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            position: fixed;
+            top: 0;
+            left: 0;
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .header {
+            padding: 30px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .header::before, .header::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-color: var(--neon-cyan);
+            border-style: solid;
+            filter: drop-shadow(0 0 6px var(--neon-cyan));
+        }
+        .header::before {
+            top: -2px;
+            left: -2px;
+            border-width: 2px 0 0 2px;
+        }
+        .header::after {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 2px 2px 0;
+        }
+        .heading-font {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            color: rgba(0, 242, 255, 0.7);
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .diagram-container {
+            background: var(--bg-panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            position: relative;
+            height: 750px;
+            padding: 20px;
+        }
+        .diagram-container::before, .diagram-container::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-color: var(--neon-magenta);
+            border-style: solid;
+            filter: drop-shadow(0 0 6px var(--neon-magenta));
+        }
+        .diagram-container::before {
+            top: -2px;
+            left: -2px;
+            border-width: 2px 0 0 2px;
+        }
+        .diagram-container::after {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 2px 2px 0;
+        }
+        #network {
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 11, 20, 0.5);
+        }
+        .legend {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--bg-panel);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            padding: 15px;
+            font-size: 11px;
+            z-index: 100;
+            max-width: 250px;
+        }
+        .legend-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-lime);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-shadow: 0 0 6px var(--neon-lime);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            color: rgba(0, 242, 255, 0.8);
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .tooltip {
+            position: absolute;
+            background: var(--bg-panel);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 0;
+            padding: 15px;
+            font-size: 12px;
+            z-index: 1000;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            max-width: 300px;
+            display: none;
+            pointer-events: none;
+        }
+        .tooltip.active {
+            display: block;
+        }
+        .tooltip-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-shadow: 0 0 8px var(--neon-cyan);
+        }
+        .tooltip-desc {
+            color: rgba(0, 242, 255, 0.8);
+            line-height: 1.5;
+            font-size: 11px;
+        }
+        .tooltip-meta {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 242, 255, 0.2);
+            font-size: 10px;
+            color: var(--neon-lime);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid">
+        <div class="scanline"></div>
+        <div class="container">
+            <div class="header">
+                <h1 class="heading-font">Core Internet Technologies & Protocols</h1>
+                <p class="subtitle">Network stack visualization / Protocol relationships</p>
+            </div>
+            
+            <div class="diagram-container">
+                <div class="legend">
+                    <div class="legend-title">OSI Layers</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff00ff;"></div>
+                        <span>Application Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00f2ff;"></div>
+                        <span>Session Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #39ff14;"></div>
+                        <span>Transport Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff6b00;"></div>
+                        <span>Network Layer</span>
+                    </div>
+                </div>
+                <div id="network"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-desc" id="tooltip-desc"></div>
+        <div class="tooltip-meta" id="tooltip-meta"></div>
+    </div>
+
+    <script>
+        const diagramData = {
+  "type": "network",
+  "theme": "scifi",
+  "title": "Core Internet Technologies & Protocols",
+  "description": "Key protocols, services, and their relationships in the Internet stack",
+  "nodes": [
+    {
+      "id": "ip",
+      "label": "IP",
+      "group": "network-layer",
+      "size": 18,
+      "description": "Internet Protocol - Routes packets across networks",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 3
+      }
+    },
+    {
+      "id": "tcp",
+      "label": "TCP",
+      "group": "transport-layer",
+      "size": 17,
+      "description": "Transmission Control Protocol - Reliable, ordered, connection-oriented",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 3
+      }
+    },
+    {
+      "id": "udp",
+      "label": "UDP",
+      "group": "transport-layer",
+      "size": 15,
+      "description": "User Datagram Protocol - Fast, connectionless, no guarantees",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "http",
+      "label": "HTTP/HTTPS",
+      "group": "application-layer",
+      "size": 16,
+      "description": "HyperText Transfer Protocol - Web communication foundation",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "dns",
+      "label": "DNS",
+      "group": "application-layer",
+      "size": 16,
+      "description": "Domain Name System - Translates domain names to IP addresses",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 3
+      }
+    },
+    {
+      "id": "tls",
+      "label": "TLS/SSL",
+      "group": "session-layer",
+      "size": 14,
+      "description": "Transport Layer Security - Encryption and authentication",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 4
+      }
+    },
+    {
+      "id": "dhcp",
+      "label": "DHCP",
+      "group": "application-layer",
+      "size": 12,
+      "description": "Dynamic Host Configuration Protocol - Automatic IP assignment",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "icmp",
+      "label": "ICMP",
+      "group": "network-layer",
+      "size": 11,
+      "description": "Internet Control Message Protocol - Error reporting and diagnostics",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "ftp",
+      "label": "FTP",
+      "group": "application-layer",
+      "size": 10,
+      "description": "File Transfer Protocol - File exchange between systems",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "smtp",
+      "label": "SMTP",
+      "group": "application-layer",
+      "size": 11,
+      "description": "Simple Mail Transfer Protocol - Email transmission",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "websocket",
+      "label": "WebSocket",
+      "group": "application-layer",
+      "size": 12,
+      "description": "Persistent bidirectional connection for real-time apps",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 3
+      }
+    },
+    {
+      "id": "quic",
+      "label": "QUIC",
+      "group": "transport-layer",
+      "size": 13,
+      "description": "Modern transport protocol - UDP-based, built-in encryption",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 4
+      }
+    },
+    {
+      "id": "arp",
+      "label": "ARP",
+      "group": "network-layer",
+      "size": 10,
+      "description": "Address Resolution Protocol - Maps IP to MAC addresses",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 2
+      }
+    },
+    {
+      "id": "nat",
+      "label": "NAT",
+      "group": "network-layer",
+      "size": 11,
+      "description": "Network Address Translation - IP address mapping",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 3
+      }
+    },
+    {
+      "id": "bgp",
+      "label": "BGP",
+      "group": "network-layer",
+      "size": 12,
+      "description": "Border Gateway Protocol - Internet routing between ISPs",
+      "metadata": {
+        "importance": "core",
+        "difficulty": 5
+      }
+    },
+    {
+      "id": "ssh",
+      "label": "SSH",
+      "group": "application-layer",
+      "size": 11,
+      "description": "Secure Shell - Encrypted remote access",
+      "metadata": {
+        "importance": "supporting",
+        "difficulty": 3
+      }
+    }
+  ],
+  "links": [
+    {
+      "source": "tcp",
+      "target": "ip",
+      "type": "depends_on",
+      "strength": 1.0,
+      "bidirectional": false,
+      "description": "TCP runs on top of IP"
+    },
+    {
+      "source": "udp",
+      "target": "ip",
+      "type": "depends_on",
+      "strength": 1.0,
+      "bidirectional": false,
+      "description": "UDP runs on top of IP"
+    },
+    {
+      "source": "http",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "HTTP uses TCP for reliable delivery"
+    },
+    {
+      "source": "http",
+      "target": "tls",
+      "type": "commonly_used_with",
+      "strength": 0.9,
+      "bidirectional": false,
+      "description": "HTTPS = HTTP over TLS"
+    },
+    {
+      "source": "dns",
+      "target": "udp",
+      "type": "depends_on",
+      "strength": 0.85,
+      "bidirectional": false,
+      "description": "DNS primarily uses UDP (TCP for large responses)"
+    },
+    {
+      "source": "dns",
+      "target": "tcp",
+      "type": "alternative_for",
+      "strength": 0.3,
+      "bidirectional": false,
+      "description": "DNS fallback to TCP for zone transfers"
+    },
+    {
+      "source": "tls",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.9,
+      "bidirectional": false,
+      "description": "TLS operates over TCP"
+    },
+    {
+      "source": "dhcp",
+      "target": "udp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "DHCP uses UDP broadcast"
+    },
+    {
+      "source": "icmp",
+      "target": "ip",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "ICMP is part of IP layer"
+    },
+    {
+      "source": "ftp",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "FTP uses TCP connections"
+    },
+    {
+      "source": "smtp",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "SMTP uses TCP"
+    },
+    {
+      "source": "websocket",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "WebSocket upgrades HTTP/TCP connection"
+    },
+    {
+      "source": "quic",
+      "target": "udp",
+      "type": "depends_on",
+      "strength": 1.0,
+      "bidirectional": false,
+      "description": "QUIC is built on UDP"
+    },
+    {
+      "source": "quic",
+      "target": "tcp",
+      "type": "alternative_for",
+      "strength": 0.7,
+      "bidirectional": false,
+      "description": "QUIC aims to replace TCP"
+    },
+    {
+      "source": "arp",
+      "target": "ip",
+      "type": "commonly_used_with",
+      "strength": 0.8,
+      "bidirectional": false,
+      "description": "ARP resolves IP to MAC addresses"
+    },
+    {
+      "source": "nat",
+      "target": "ip",
+      "type": "commonly_used_with",
+      "strength": 0.85,
+      "bidirectional": false,
+      "description": "NAT translates IP addresses"
+    },
+    {
+      "source": "bgp",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.9,
+      "bidirectional": false,
+      "description": "BGP uses TCP for routing info exchange"
+    },
+    {
+      "source": "ssh",
+      "target": "tcp",
+      "type": "depends_on",
+      "strength": 0.95,
+      "bidirectional": false,
+      "description": "SSH operates over TCP"
+    },
+    {
+      "source": "tcp",
+      "target": "udp",
+      "type": "alternative_for",
+      "strength": 0.5,
+      "bidirectional": true,
+      "description": "Both are transport protocols with different tradeoffs"
+    },
+    {
+      "source": "http",
+      "target": "quic",
+      "type": "commonly_used_with",
+      "strength": 0.6,
+      "bidirectional": false,
+      "description": "HTTP/3 uses QUIC"
+    }
+  ]
+};
+
+        // Define color scheme for different layers
+        const groupColors = {
+            'application-layer': '#ff00ff',     // Magenta
+            'session-layer': '#00f2ff',         // Cyan
+            'transport-layer': '#39ff14',       // Lime
+            'network-layer': '#ff6b00'          // Orange
+        };
+
+        // Build nodes and edges for vis.js with scifi styling
+        const nodes = new vis.DataSet(
+            diagramData.nodes.map(node => {
+                const baseColor = groupColors[node.group] || '#00f2ff';
+                return {
+                    id: node.id,
+                    label: node.label.toUpperCase(),
+                    title: node.description || node.label,
+                    size: (node.size || 15) * 2.5,
+                    color: {
+                        background: 'rgba(5, 11, 20, 0.9)',
+                        border: baseColor,
+                        highlight: {
+                            background: baseColor,
+                            border: '#ffffff'
+                        },
+                        hover: {
+                            background: 'rgba(5, 11, 20, 0.9)',
+                            border: '#ffffff'
+                        }
+                    },
+                    borderWidth: 2,
+                    font: {
+                        size: 11,
+                        color: baseColor,
+                        face: 'JetBrains Mono',
+                        bold: {
+                            size: 12
+                        }
+                    },
+                    shadow: {
+                        enabled: true,
+                        color: baseColor,
+                        size: 15,
+                        x: 0,
+                        y: 0
+                    },
+                    _nodeData: node
+                };
+            })
+        );
+
+        const edges = new vis.DataSet(
+            diagramData.links.map((link, idx) => {
+                const edgeColor = link.type === 'depends_on' ? '#00f2ff' : 
+                                 link.type === 'alternative_for' ? '#ff00ff' : 
+                                 '#39ff14';
+                return {
+                    id: `edge-${idx}`,
+                    from: link.source,
+                    to: link.target,
+                    title: link.description || '',
+                    width: (link.strength || 0.5) * 2,
+                    arrows: {
+                        to: {
+                            enabled: !link.bidirectional,
+                            scaleFactor: 0.5
+                        },
+                        from: {
+                            enabled: link.bidirectional,
+                            scaleFactor: 0.5
+                        }
+                    },
+                    color: {
+                        color: edgeColor,
+                        highlight: '#ffffff',
+                        hover: '#ffffff',
+                        opacity: 0.6
+                    },
+                    smooth: {
+                        enabled: true,
+                        type: 'cubicBezier',
+                        roundness: 0.5
+                    },
+                    shadow: {
+                        enabled: true,
+                        color: edgeColor,
+                        size: 5,
+                        x: 0,
+                        y: 0
+                    }
+                };
+            })
+        );
+
+        const options = {
+            physics: {
+                enabled: true,
+                stabilization: {
+                    enabled: true,
+                    iterations: 300,
+                    updateInterval: 50
+                },
+                barnesHut: {
+                    gravitationalConstant: -35000,
+                    centralGravity: 0.15,
+                    springLength: 150,
+                    springConstant: 0.02,
+                    damping: 0.4,
+                    avoidOverlap: 0.8
+                }
+            },
+            interaction: {
+                navigationButtons: true,
+                keyboard: true,
+                hover: true,
+                tooltipDelay: 200,
+                dragNodes: true,
+                dragView: true,
+                zoomView: true
+            },
+            manipulation: {
+                enabled: false
+            },
+            nodes: {
+                shape: 'box',
+                margin: 10,
+                widthConstraint: {
+                    minimum: 80,
+                    maximum: 120
+                }
+            }
+        };
+
+        const container = document.getElementById('network');
+        const data = { nodes: nodes, edges: edges };
+        const network = new vis.Network(container, data, options);
+
+        // Tooltip handling
+        const tooltip = document.getElementById('tooltip');
+        
+        network.on('hoverNode', (params) => {
+            const nodeId = params.node;
+            const node = diagramData.nodes.find(n => n.id === nodeId);
+            if (node) {
+                document.getElementById('tooltip-title').textContent = node.label;
+                document.getElementById('tooltip-desc').textContent = node.description || '';
+                document.getElementById('tooltip-meta').textContent = 
+                    `Importance: ${node.metadata.importance} | Difficulty: ${node.metadata.difficulty}/5`;
+                tooltip.classList.add('active');
+                const canvasPos = network.canvasToDOM(params.pointer.canvas);
+                tooltip.style.left = (canvasPos.x + 15) + 'px';
+                tooltip.style.top = (canvasPos.y + 15) + 'px';
+            }
+        });
+
+        network.on('blurNode', () => {
+            tooltip.classList.remove('active');
+        });
+
+        // Initial stabilization message
+        network.on('stabilizationProgress', function(params) {
+            const widthFactor = params.iterations/params.total;
+            console.log('Stabilizing network: ' + Math.round(widthFactor * 100) + '%');
+        });
+
+        network.once('stabilizationIterationsDone', function() {
+            console.log('Network stabilized');
+            network.setOptions({ physics: false });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchy Tree Diagram</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 24px;
+            background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .diagram-container {
+            padding: 20px;
+            overflow: auto;
+            max-height: 600px;
+            background: #fafbfc;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            min-height: 400px;
+        }
+
+        .node circle {
+            stroke: white;
+            stroke-width: 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .node circle:hover {
+            stroke-width: 3px;
+            filter: brightness(1.1);
+        }
+
+        .node text {
+            font-size: 12px;
+            font-weight: 500;
+            text-anchor: middle;
+            pointer-events: none;
+            fill: #222;
+        }
+
+        .node.complete circle { fill: #06A77D; }
+        .node.in-progress circle { fill: #F4B860; }
+        .node.locked circle { fill: #C94C4C; }
+        .node.optional circle { fill: #999999; }
+
+        .link {
+            stroke: #ccc;
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            max-width: 250px;
+            display: none;
+            pointer-events: none;
+        }
+
+        .tooltip.active {
+            display: block;
+        }
+
+        .tooltip-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #222;
+        }
+
+        .tooltip-desc {
+            color: #666;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+        }
+
+        .legend-complete { background: #06A77D; }
+        .legend-in-progress { background: #F4B860; }
+        .legend-locked { background: #C94C4C; }
+        .legend-optional { background: #999999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="title">Hierarchy Diagram</h1>
+            <p id="description"></p>
+        </div>
+        <div class="diagram-container">
+            <svg id="diagram"></svg>
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color legend-complete"></div>
+                <span>Complete</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-in-progress"></div>
+                <span>In Progress</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-locked"></div>
+                <span>Locked</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-optional"></div>
+                <span>Optional</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-label" id="tooltip-label"></div>
+        <div class="tooltip-desc" id="tooltip-desc"></div>
+    </div>
+
+    <script>
+        // Data will be injected here by generator.js
+        const diagramData = __DIAGRAM_DATA__;
+
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+        const width = 960 - margin.left - margin.right;
+        const height = 600 - margin.top - margin.bottom;
+
+        // Set title and description
+        document.getElementById('title').textContent = diagramData.title || 'Hierarchy Diagram';
+        document.getElementById('description').textContent = diagramData.description || '';
+
+        // Build tree data structure
+        function buildTreeData(root, nodes) {
+            const nodeMap = new Map();
+            nodeMap.set(root.id, { ...root, children: [] });
+
+            nodes.forEach(node => {
+                nodeMap.set(node.id, { ...node, children: [] });
+            });
+
+            nodes.forEach(node => {
+                if (nodeMap.has(node.parentId)) {
+                    nodeMap.get(node.parentId).children.push(nodeMap.get(node.id));
+                }
+            });
+
+            return nodeMap.get(root.id);
+        }
+
+        const treeData = buildTreeData(diagramData.root, diagramData.nodes);
+
+        // Create tree layout
+        const svg = d3.select('#diagram');
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        const tree = d3.tree().size([width, height]);
+        const root = d3.hierarchy(treeData);
+        const treeLayout = tree(root);
+
+        // Draw links
+        g.selectAll('.link')
+            .data(treeLayout.links())
+            .enter()
+            .append('line')
+            .attr('class', 'link')
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
+
+        // Draw nodes
+        const tooltip = d3.select('#tooltip');
+        const nodes = g.selectAll('.node')
+            .data(treeLayout.descendants())
+            .enter()
+            .append('g')
+            .attr('class', d => {
+                const status = d.data.metadata?.status || 'optional';
+                return `node ${status}`;
+            })
+            .attr('transform', d => `translate(${d.x},${d.y})`);
+
+        nodes.append('circle')
+            .attr('r', 20)
+            .on('mouseenter', function(event, d) {
+                d3.select(this).transition().duration(200)
+                    .attr('r', 24);
+                
+                tooltip.classed('active', true);
+                document.getElementById('tooltip-label').textContent = d.data.label;
+                document.getElementById('tooltip-desc').textContent = d.data.description || '';
+                tooltip.style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY + 10) + 'px');
+            })
+            .on('mouseleave', function() {
+                d3.select(this).transition().duration(200)
+                    .attr('r', 20);
+                tooltip.classed('active', false);
+            });
+
+        nodes.append('text')
+            .text(d => d.data.label)
+            .attr('dy', 4)
+            .attr('font-size', '11px');
+
+        // Adjust SVG size based on content
+        const bbox = g.node().getBBox();
+        svg.attr('viewBox', `${bbox.x - 20} ${bbox.y - 20} ${bbox.width + 40} ${bbox.height + 40}`)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Diagram</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { padding: 24px; background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%); color: white; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .diagram-container { padding: 20px; height: 600px; background: #fafbfc; }
+        #network { width: 100%; height: 100%; border-radius: 4px; border: 1px solid #eee; }
+        .tooltip { position: absolute; background: white; border: 1px solid #ddd; border-radius: 6px; padding: 12px; font-size: 12px; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); max-width: 250px; display: none; }
+        .tooltip.active { display: block; }
+        .tooltip-title { font-weight: 600; margin-bottom: 4px; }
+        .tooltip-desc { color: #666; font-size: 11px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="title">Network Diagram</h1>
+            <p id="description"></p>
+        </div>
+        <div class="diagram-container">
+            <div id="network"></div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-desc" id="tooltip-desc"></div>
+    </div>
+
+    <script>
+        const diagramData = __DIAGRAM_DATA__;
+
+        document.getElementById('title').textContent = diagramData.title || 'Network Diagram';
+        document.getElementById('description').textContent = diagramData.description || '';
+
+        // Build nodes and edges for vis.js
+        const nodes = new vis.DataSet(
+            diagramData.nodes.map(node => ({
+                id: node.id,
+                label: node.label,
+                title: node.description || node.label,
+                size: (node.size || 15) * 2,
+                color: {background: '#2E86AB', border: '#fff', highlight: {background: '#A23B72', border: '#fff'}},
+                font: {size: 14, color: '#fff', face: 'sans-serif'}
+            }))
+        );
+
+        const edges = new vis.DataSet(
+            diagramData.links.map(link => ({
+                from: link.source,
+                to: link.target,
+                label: link.type || '',
+                title: link.description || '',
+                width: (link.strength || 0.5) * 3,
+                arrows: link.bidirectional ? 'to;from' : 'to'
+            }))
+        );
+
+        const options = {
+            physics: {
+                enabled: true,
+                stabilization: {iterations: 200},
+                barnesHut: {gravitationalConstant: -26000, centralGravity: 0.3, springLength: 200}
+            },
+            interaction: {navigationButtons: true, keyboard: true},
+            manipulation: {enabled: false}
+        };
+
+        const container = document.getElementById('network');
+        const data = {nodes: nodes, edges: edges};
+        const network = new vis.Network(container, data, options);
+
+        const tooltip = document.getElementById('tooltip');
+        network.on('click', (params) => {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const node = diagramData.nodes.find(n => n.id === nodeId);
+                if (node) {
+                    document.getElementById('tooltip-title').textContent = node.label;
+                    document.getElementById('tooltip-desc').textContent = node.description || '';
+                    tooltip.classList.add('active');
+                    tooltip.style.left = params.pointer.DOM.x + 10 + 'px';
+                    tooltip.style.top = params.pointer.DOM.y + 10 + 'px';
+                }
+            } else {
+                tooltip.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

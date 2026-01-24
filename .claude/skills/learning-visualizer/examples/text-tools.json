@@ -1,0 +1,99 @@
+{
+    "type": "network",
+    "title": "Text Processing Commands",
+    "description": "Relationships between grep, awk, sed, and text tools",
+    "nodes": [
+        {
+            "id": "grep",
+            "label": "grep",
+            "group": "search",
+            "size": 20,
+            "description": "Search for patterns in text files"
+        },
+        {
+            "id": "awk",
+            "label": "awk",
+            "group": "processing",
+            "size": 19,
+            "description": "Text processing and field manipulation"
+        },
+        {
+            "id": "sed",
+            "label": "sed",
+            "group": "processing",
+            "size": 18,
+            "description": "Stream editor for text transformation"
+        },
+        {
+            "id": "cut",
+            "label": "cut",
+            "group": "extraction",
+            "size": 15,
+            "description": "Extract columns from structured text"
+        },
+        {
+            "id": "sort",
+            "label": "sort",
+            "group": "ordering",
+            "size": 16,
+            "description": "Sort lines of text"
+        },
+        {
+            "id": "pipe",
+            "label": "|",
+            "group": "operators",
+            "size": 14,
+            "description": "Pipe operator for command chaining"
+        }
+    ],
+    "links": [
+        {
+            "source": "grep",
+            "target": "awk",
+            "type": "alternative_for",
+            "strength": 0.7,
+            "bidirectional": false,
+            "description": "Can often replace each other for text processing"
+        },
+        {
+            "source": "grep",
+            "target": "sed",
+            "type": "alternative_for",
+            "strength": 0.5,
+            "bidirectional": false,
+            "description": "Both can do pattern matching and editing"
+        },
+        {
+            "source": "grep",
+            "target": "pipe",
+            "type": "commonly_used_with",
+            "strength": 0.95,
+            "bidirectional": true,
+            "description": "grep is typically piped"
+        },
+        {
+            "source": "awk",
+            "target": "cut",
+            "type": "alternative_for",
+            "strength": 0.7,
+            "bidirectional": true,
+            "description": "Both extract columns, awk is more powerful"
+        },
+        {
+            "source": "sort",
+            "target": "pipe",
+            "type": "commonly_used_with",
+            "strength": 0.9,
+            "bidirectional": true,
+            "description": "sort is often at end of pipes"
+        },
+        {
+            "source": "awk",
+            "target": "sed",
+            "type": "similar_to",
+            "strength": 0.6,
+            "bidirectional": true,
+            "description": "Both are stream processors with patterns"
+        }
+    ]
+}

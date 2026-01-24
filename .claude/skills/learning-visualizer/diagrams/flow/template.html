@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { padding: 24px; background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%); color: white; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .diagram-container { padding: 20px; overflow: auto; background: #fafbfc; }
+        svg { width: 100%; height: auto; }
+        .node { cursor: pointer; }
+        .node rect { stroke: white; stroke-width: 2px; transition: all 0.3s; }
+        .node rect:hover { filter: brightness(1.1); stroke-width: 3px; }
+        .node text { pointer-events: none; fill: white; font-weight: 500; text-anchor: middle; }
+        .edge { stroke: #666; stroke-width: 2px; fill: none; marker-end: url(#arrowhead); }
+        .edge.conditional { stroke-dasharray: 5,5; stroke: #F4B860; }
+        .edge.error { stroke: #C94C4C; }
+        .edge-label { font-size: 11px; fill: #666; }
+        .start rect { fill: #06A77D; }
+        .process rect { fill: #2E86AB; }
+        .decision polygon { fill: #F4B860; }
+        .end rect { fill: #C94C4C; }
+        .tooltip { position: absolute; background: white; border: 1px solid #ddd; border-radius: 6px; padding: 12px; font-size: 12px; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); max-width: 300px; display: none; }
+        .tooltip.active { display: block; }
+        .tooltip-title { font-weight: 600; margin-bottom: 4px; color: #222; }
+        .tooltip-desc { color: #666; font-size: 11px; line-height: 1.4; }
+        .legend { display: flex; gap: 20px; padding: 16px 20px; background: #f8f9fa; border-top: 1px solid #eee; font-size: 12px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-box { width: 16px; height: 16px; border-radius: 2px; }
+        .legend-start { background: #06A77D; }
+        .legend-process { background: #2E86AB; }
+        .legend-decision { background: #F4B860; }
+        .legend-end { background: #C94C4C; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="title">Flow Diagram</h1>
+            <p id="description"></p>
+        </div>
+        <div class="diagram-container">
+            <svg id="diagram"></svg>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-box legend-start"></div><span>Start</span></div>
+            <div class="legend-item"><div class="legend-box legend-process"></div><span>Process</span></div>
+            <div class="legend-item"><div class="legend-box legend-decision"></div><span>Decision</span></div>
+            <div class="legend-item"><div class="legend-box legend-end"></div><span>End</span></div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-desc" id="tooltip-desc"></div>
+    </div>
+
+    <script>
+        const diagramData = __DIAGRAM_DATA__;
+
+        document.getElementById('title').textContent = diagramData.title || 'Flow Diagram';
+        document.getElementById('description').textContent = diagramData.description || '';
+
+        const svg = document.getElementById('diagram');
+        const width = 1000, height = 600;
+        const nodeWidth = 120, nodeHeight = 60;
+        const spacing = 160;
+
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+        // Draw arrowhead marker
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+        marker.setAttribute('id', 'arrowhead');
+        marker.setAttribute('markerWidth', '10');
+        marker.setAttribute('markerHeight', '10');
+        marker.setAttribute('refX', '9');
+        marker.setAttribute('refY', '3');
+        marker.setAttribute('orient', 'auto');
+        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        polygon.setAttribute('points', '0 0, 10 3, 0 6');
+        polygon.setAttribute('fill', '#666');
+        marker.appendChild(polygon);
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+
+        // Simple layout: arrange nodes left to right
+        const nodePositions = new Map();
+        let xPos = 50;
+        diagramData.nodes.forEach((node, idx) => {
+            nodePositions.set(node.id, { x: xPos, y: 50 + (idx % 3) * 120 });
+            if ((idx + 1) % 3 === 0) xPos += spacing;
+        });
+
+        // Draw edges
+        const edgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        diagramData.edges.forEach(edge => {
+            const from = nodePositions.get(edge.from);
+            const to = nodePositions.get(edge.to);
+            if (!from || !to) return;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', from.x + nodeWidth / 2);
+            line.setAttribute('y1', from.y + nodeHeight / 2);
+            line.setAttribute('x2', to.x + nodeWidth / 2);
+            line.setAttribute('y2', to.y + nodeHeight / 2);
+            line.setAttribute('class', `edge ${edge.edgeType || 'normal'}`);
+            edgeGroup.appendChild(line);
+
+            // Add edge label
+            if (edge.label) {
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', midX);
+                text.setAttribute('y', midY - 5);
+                text.setAttribute('class', 'edge-label');
+                text.textContent = edge.label;
+                edgeGroup.appendChild(text);
+            }
+        });
+        svg.appendChild(edgeGroup);
+
+        // Draw nodes
+        const tooltip = document.getElementById('tooltip');
+        const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        diagramData.nodes.forEach(node => {
+            const pos = nodePositions.get(node.id);
+            if (!pos) return;
+
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('class', `node ${node.nodeType}`);
+
+            if (node.nodeType === 'decision') {
+                // Diamond shape for decision
+                const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                const points = [pos.x + nodeWidth/2, pos.y,  pos.x + nodeWidth, pos.y + nodeHeight/2, pos.x + nodeWidth/2, pos.y + nodeHeight, pos.x, pos.y + nodeHeight/2];
+                polygon.setAttribute('points', points.join(' '));
+                polygon.setAttribute('class', 'decision');
+                g.appendChild(polygon);
+            } else {
+                // Rectangle for other node types
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', pos.x);
+                rect.setAttribute('y', pos.y);
+                rect.setAttribute('width', nodeWidth);
+                rect.setAttribute('height', nodeHeight);
+                rect.setAttribute('rx', node.nodeType === 'end' ? 30 : 5);
+                g.appendChild(rect);
+            }
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', pos.x + nodeWidth / 2);
+            text.setAttribute('y', pos.y + nodeHeight / 2 + 5);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '12px');
+            text.setAttribute('font-weight', '500');
+            text.setAttribute('fill', 'white');
+            text.textContent = node.label;
+            g.appendChild(text);
+
+            g.addEventListener('mouseenter', (e) => {
+                tooltip.classList.add('active');
+                document.getElementById('tooltip-title').textContent = node.label;
+                document.getElementById('tooltip-desc').textContent = node.description || '';
+                tooltip.style.left = (e.pageX + 10) + 'px';
+                tooltip.style.top = (e.pageY + 10) + 'px';
+            });
+            g.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('active');
+            });
+
+            nodeGroup.appendChild(g);
+        });
+        svg.appendChild(nodeGroup);
+    </script>
+</body>
+</html>

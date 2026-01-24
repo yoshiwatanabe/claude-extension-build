@@ -1,0 +1,79 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Timeline Schema",
+    "type": "object",
+    "required": [
+        "type",
+        "events"
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "const": "timeline"
+        },
+        "title": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "events": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "timestamp",
+                    "label"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "number"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "metadata": {
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "milestones": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "timestamp",
+                    "label"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "label": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
